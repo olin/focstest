@@ -1,0 +1,8 @@
+# self-created
+focstest-cache/
+# build-related
+build/
+dist/
+# python-related
+__pycache__/
+*.pyc
