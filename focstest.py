@@ -150,9 +150,9 @@ if __name__ == "__main__":
     blocks = get_blocks(html)
     # parse code blocks for tests
     test_suites = [get_tests(block) for block in blocks]
+    num_tests = sum([len(suite) for suite in test_suites])
     logger.info("Found {} test suites and {} tests total".format(
         len(test_suites),
-        sum([len(suite) for suite in test_suites])))
         num_tests))
     # TODO: save tests to file
 
@@ -161,11 +161,16 @@ if __name__ == "__main__":
     if not os.path.exists(FILE):
         logger.critical("File {} does not exist".format(FILE))
         sys.exit(1)
-    for suite in test_suites:
+    num_failed = 0
+    for i, suite in enumerate(test_suites):
         for test, expected_output in suite:
             result, output = run_test(test, expected_output, file=FILE)
             if result is False:
+                num_failed += 1
                 print("Test failed.\n\tINPUT: {!r}\n\tEXPECTED: {!r}\n\tOUTPUT: {!r}".format(
                     test,
                     expected_output,
                     output))
+        print('Finished testing suite {} of {}.'.format(i+1, len(test_suites)))
+    print('Finished testing.')
+    print('{} of {} tests succeeded.'.format(num_tests - num_failed, num_tests))
