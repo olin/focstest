@@ -158,20 +158,25 @@ if __name__ == "__main__":
     # TODO: save tests to file
 
     # run tests
-    # TODO: check for "not implemented" error
     if not os.path.exists(FILE):
         logger.critical("File {} does not exist".format(FILE))
         sys.exit(1)
     num_failed = 0
+    num_skipped = 0
     for i, suite in enumerate(test_suites):
-        for test, expected_output in suite:
+        print('Testing suite {} of {}.'.format(i+1, len(test_suites)))
+        for j, (test, expected_output) in enumerate(suite):
             result, output = run_test(test, expected_output, file=FILE)
             if result is False:
+                if output == 'Exception: Failure "not implemented".':
+                    num_skipped += len(suite) - (j + 1)
+                    print('Skipped suite {}'.format(i + 1))
+                    break
                 num_failed += 1
                 print("Test failed.\n\tINPUT: {!r}\n\tEXPECTED: {!r}\n\tOUTPUT: {!r}".format(
                     test,
                     expected_output,
                     output))
-        print('Finished testing suite {} of {}.'.format(i+1, len(test_suites)))
     print('Finished testing.')
-    print('{} of {} tests succeeded.'.format(num_tests - num_failed, num_tests))
+    print('{} of {} tests failed.'.format(num_failed, num_tests))
+    print('{} tests skipped.'.format(num_skipped))
