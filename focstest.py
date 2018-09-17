@@ -104,16 +104,20 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run ocaml "doctests".')
     input_types = parser.add_mutually_exclusive_group(required=True)
     input_types.add_argument('-u', '--url', type=str,
-                        help='the url to scrape tests from')
+                             help='a url to scrape tests from')
+    # input_types.add_argument('-f', '--file', type=str,
+    #                          help='a file to load tests from')
     parser.add_argument('ocaml-file', type=str,
                         help='the ocaml file to test against')
     parser.add_argument('-v', '--verbose', action='store_true',
-                    help='increase test output verbosity')
-    parser.add_argument('--log', choices=['debug','info','warning'],
+                        help='increase test output verbosity')
+    parser.add_argument('--log-level', choices=['debug', 'info', 'warning'],
                         help='the program log level')
+    parser.add_argument('-uc', '--update-cache', action='store_true',
+                        help='update cached files')
     args = parser.parse_args()
-    if args.log:
-        numeric_level = getattr(logging, args.log.upper(), None)
+    if args.log_level:
+        numeric_level = getattr(logging, args.log_level.upper(), None)
         logger.setLevel(numeric_level)
 
     URL = args.url
@@ -128,7 +132,7 @@ if __name__ == "__main__":
     html_filepath = os.path.join(CACHE_DIR, page_name)  # local filepath
 
     # get webpage if cached version doesn't already exist
-    if not os.path.isfile(html_filepath):
+    if not os.path.isfile(html_filepath) or args.update_cache:
         response = requests.get(URL)
         if response.status_code != 200:  # break if webpage can't be fetched
             logger.critical("Unable to fetch url {}: Status {}: {}".format(
@@ -142,7 +146,7 @@ if __name__ == "__main__":
             htmlcache.write(html)
             logger.debug("Saved {!r} to cache at {!r}".format(URL, html_filepath))
     else:
-        logger.debug("Found cached version at {!r}".format(html_filepath))
+        logger.debug("Using cached version at {!r}".format(html_filepath))
         with open(html_filepath, 'r') as htmlcache:
             html = htmlcache.read()
 
