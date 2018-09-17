@@ -107,8 +107,8 @@ if __name__ == "__main__":
                         help='the url to scrape tests from')
     parser.add_argument('ocaml-file', type=str,
                         help='the ocaml file to test against')
-    # parser.add_argument('-v', '--verbose', action='store_true',
-                    # help='increase test output verbosity')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                    help='increase test output verbosity')
     parser.add_argument('--log', choices=['debug','info','warning'],
                         help='the program log level')
     args = parser.parse_args()
@@ -164,7 +164,8 @@ if __name__ == "__main__":
     num_failed = 0
     num_skipped = 0
     for i, suite in enumerate(test_suites):
-        print('Testing suite {} of {}.'.format(i+1, len(test_suites)))
+        if args.verbose:
+            print('Testing suite {} of {}.'.format(i+1, len(test_suites)))
         for j, (test, expected_output) in enumerate(suite):
             result, output = run_test(test, expected_output, file=FILE)
             if result is False:
