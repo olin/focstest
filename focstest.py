@@ -115,6 +115,8 @@ if __name__ == "__main__":
                         help='the program log level')
     parser.add_argument('-uc', '--update-cache', action='store_true',
                         help='update cached files')
+    parser.add_argument('-t', '--tests', metavar='N', type=int, nargs='*',
+                        help='specific test numbers to run, indexed from 1')
     args = parser.parse_args()
     if args.log_level:
         numeric_level = getattr(logging, args.log_level.upper(), None)
@@ -167,6 +169,14 @@ if __name__ == "__main__":
         sys.exit(1)
     num_failed = 0
     num_skipped = 0
+
+    if args.tests:
+        skipped_suites = [test_suites[i] for i in range(len(test_suites)) if i-1 not in args.tests]
+        for suite in skipped_suites:
+            num_skipped += len(suite)
+
+        test_suites = [test_suites[i-1] for i in args.tests]
+
     for i, suite in enumerate(test_suites):
         if args.verbose:
             print('Testing suite {} of {}.'.format(i+1, len(test_suites)))
