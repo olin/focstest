@@ -45,7 +45,7 @@ def get_blocks(html):
 def get_tests(text):
     """Parse Ocaml tests from text.
 
-    :returns: list of test tuples with format (input, expected output)
+    :returns: list of test tuples with format (input, expected, output)
     """
     tests = TEST_COMP.findall(text)
     if len(tests) == 0:
