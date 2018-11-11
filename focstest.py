@@ -178,7 +178,7 @@ if __name__ == "__main__":
                     print('Skipped suite {}'.format(i + 1))
                     break
                 num_failed += 1
-                print("Test failed.\n\tINPUT: {!r}\n\tEXPECTED: {!r}\n\tOUTPUT: {!r}".format(
+                print("Test failed.\n  INPUT:\t{!r}\n  EXPECTED:\t{!r}\n  OUTPUT:\t{!r}".format(
                     test,
                     expected_output,
                     output))
