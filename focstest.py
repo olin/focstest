@@ -192,6 +192,11 @@ if __name__ == "__main__":
                     test,
                     expected_output,
                     output))
+            elif args.verbose:
+                print("Test passed.\n  INPUT:\t{!r}\n  EXPECTED:\t{!r}\n  OUTPUT:\t{!r}".format(
+                    test,
+                    expected_output,
+                    output))
     print('Finished testing.')
     print('{} of {} tests failed.'.format(num_failed, num_tests))
     print('{} tests skipped.'.format(num_skipped))
