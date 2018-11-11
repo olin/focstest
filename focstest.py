@@ -173,7 +173,7 @@ if __name__ == "__main__":
         for j, (test, expected_output) in enumerate(suite):
             result, output = run_test(test, expected_output, file=FILE)
             if result is False:
-                if output == 'Exception: Failure "not implemented".':
+                if output.lower() == 'exception: failure "not implemented".':
                     num_skipped += len(suite) - (j + 1)
                     print('Skipped suite {}'.format(i + 1))
                     break
