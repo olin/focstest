@@ -148,8 +148,11 @@ if __name__ == "__main__":
                         help='the program log level')
     parser.add_argument('-uc', '--update-cache', action='store_true',
                         help='update cached files')
-    parser.add_argument('-t', '--tests', metavar='N', type=int, nargs='*',
-                        help='specific test numbers to run, indexed from 1')
+    test_selection = parser.add_mutually_exclusive_group(required=False)
+    test_selection.add_argument('-U', '--use-suites', metavar='N', type=int, nargs='*',
+                                help='test suites to use exclusively, indexed from 1')
+    test_selection.add_argument('-S', '--skip-suites', metavar='N', type=int, nargs='*',
+                                help='test suites to skip, indexed from 1')
     args = parser.parse_args()
     if args.log_level:
         numeric_level = getattr(logging, args.log_level.upper(), None)
@@ -214,12 +217,18 @@ if __name__ == "__main__":
     num_failed = 0
     num_skipped = 0
 
-    if args.tests:
-        skipped_suites = [test_suites[i] for i in range(len(test_suites)) if i-1 not in args.tests]
+    # select test suites based on args
+    # i is indexed from 0, j is indexed from 1
+    if args.use_suites:
+        skipped_suites = [test_suites[i] for i in range(len(test_suites)) if i+1 not in args.use_suites]
         for suite in skipped_suites:
             num_skipped += len(suite)
-
-        test_suites = [test_suites[i-1] for i in args.tests]
+        test_suites = [test_suites[j-1] for j in args.use_suites]
+    elif args.skip_suites:
+        skipped_suites = [test_suites[j-1] for j in args.skip_suites]
+        for suite in skipped_suites:
+            num_skipped += len(suite)
+        test_suites = [suite for i, suite in enumerate(test_suites) if i+1 not in args.skip_suites]
 
     print('Starting tests')
     for i, suite in enumerate(test_suites):
