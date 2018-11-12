@@ -18,7 +18,7 @@ logger.addHandler(logging.StreamHandler())
 
 
 # default url matching
-BASE_URL = "https://rpucella.net/courses/focs-fa18/homeworks/"
+BASE_URL = "http://rpucella.net/courses/focs-fa18/homeworks/"
 OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"
 HTML_FILE_TEMPLATE = "h{}.html"
 
