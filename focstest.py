@@ -107,25 +107,12 @@ def run_test(code: str, expected_out: str, file: str = None):
         return (output.strip() == expected_out.strip(), output)
 
 
-def get_test_str(result: bool, test_input: str, test_output: str, expected: str,
+def get_test_str(test_input: str, test_output: str, expected: str,
                  use_color=True, indent='  '):
     """Create an explanatory str about a test for printing."""
     def format_info(kind, value):
         return indent+kind.upper()+':\t'+repr(value)
-
-    HEADER_TEXTS = {
-        True: 'Test Passed.',
-        False: 'Test Failed'
-    }
-    HEADER_STYLES = {
-        True: ['green'],
-        False: ['red']
-    }
-
-    header_text = HEADER_TEXTS[result]
-    header = colored(header_text, *HEADER_STYLES[result]) if use_color else header_text
     lines = [
-        header,
         format_info('input', test_input),
         format_info('expected', expected),
         format_info('output', test_output),
@@ -236,17 +223,21 @@ if __name__ == "__main__":
             print('Testing suite {} of {}'.format(i+1, len(test_suites)))
         for j, (test, expected_output) in enumerate(suite):
             result, output = run_test(test, expected_output, file=FILE)
-            test_str = get_test_str(result, test, output, expected_output)
+            header_temp = ' test {} of {} in suite {}'.format(j+1, len(suite), i+1)
+            test_str = get_test_str(test, output, expected_output)
             if result is False:
                 if output.lower() == 'exception: failure "not implemented".':
                     if args.verbose:
+                        print(colored('Unimplemented'+header_temp, 'yellow'))
                         print(test_str)
                     num_skipped += len(suite) - (j + 1)
-                    print('Skipped unimplemented suite {}'.format(i + 1))
+                    print(colored('Skipped unimplemented suite {}'.format(i+1), 'yellow'))
                     break
                 num_failed += 1
+                print(colored('Failed'+header_temp, 'red'))
                 print(test_str)
             elif args.verbose:
+                print(colored('Passed'+header_temp, 'green'))
                 print(test_str)
         if args.verbose:
             print('-'*80)
