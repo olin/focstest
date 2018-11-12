@@ -190,8 +190,8 @@ if __name__ == "__main__":
     # TODO: get titles/descriptions from code blocks
     blocks = get_blocks(html)
     # parse code blocks for tests
-    test_suites = [get_tests(block) for block in blocks]
-    num_tests = sum([len(suite) for suite in test_suites])
+    test_suites = list(enumerate([get_tests(block) for block in blocks], 1))  # list of suites and indicies (starting at 1)
+    num_tests = sum([len(suite) for j, suite in test_suites])
     logger.info("Found {} test suites and {} tests total".format(
         len(test_suites),
         num_tests))
@@ -207,31 +207,31 @@ if __name__ == "__main__":
     # select test suites based on args
     # i is indexed from 0, j is indexed from 1
     if args.use_suites:
-        skipped_suites = [test_suites[i] for i in range(len(test_suites)) if i+1 not in args.use_suites]
+        skipped_suites = [suite for j, suite in test_suites if j not in args.use_suites]
         for suite in skipped_suites:
             num_skipped += len(suite)
         test_suites = [test_suites[j-1] for j in args.use_suites]
     elif args.skip_suites:
-        skipped_suites = [test_suites[j-1] for j in args.skip_suites]
+        skipped_suites = [test_suites[j-1][1] for j in args.skip_suites]
         for suite in skipped_suites:
             num_skipped += len(suite)
-        test_suites = [suite for i, suite in enumerate(test_suites) if i+1 not in args.skip_suites]
+        test_suites = [(j, suite) for j, suite in test_suites if j not in args.skip_suites]
 
     print('Starting tests')
-    for i, suite in enumerate(test_suites):
+    for j, suite in test_suites:
         if args.verbose:
-            print('Testing suite {} of {}'.format(i+1, len(test_suites)))
-        for j, (test, expected_output) in enumerate(suite):
+            print('Testing suite {}'.format(j))
+        for k, (test, expected_output) in enumerate(suite):
             result, output = run_test(test, expected_output, file=FILE)
-            header_temp = ' test {} of {} in suite {}'.format(j+1, len(suite), i+1)
+            header_temp = ' test {} of {} in suite {}'.format(k+1, len(suite), j)
             test_str = get_test_str(test, output, expected_output)
             if result is False:
                 if output.lower() == 'exception: failure "not implemented".':
                     if args.verbose:
                         print(colored('Unimplemented'+header_temp, 'yellow'))
                         print(test_str)
-                    num_skipped += len(suite) - (j + 1)
-                    print(colored('Skipped unimplemented suite {}'.format(i+1), 'yellow'))
+                    num_skipped += len(suite) - (k + 1)
+                    print(colored('Skipped unimplemented suite {}'.format(j), 'yellow'))
                     break
                 num_failed += 1
                 print(colored('Failed'+header_temp, 'red'))
