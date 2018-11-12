@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 import requests
+from termcolor import colored
 
 
 logger = logging.getLogger(name=__name__)  # create logger in order to change level later
@@ -100,6 +101,32 @@ def run_test(code: str, expected_out: str, file: str = None):
         return (output == expected_out, output)
 
 
+def get_test_str(result: bool, test_input: str, test_output: str, expected: str,
+                 use_color=True, indent='  '):
+    """Create an explanatory str about a test for printing."""
+    def format_info(kind, value):
+        return indent+kind.upper()+':\t'+repr(value)
+
+    HEADER_TEXTS = {
+        True: 'Test Passed.',
+        False: 'Test Failed'
+    }
+    HEADER_STYLES = {
+        True: ['green'],
+        False: ['red']
+    }
+
+    header_text = HEADER_TEXTS[result]
+    header = colored(header_text, *HEADER_STYLES[result]) if use_color else header_text
+    lines = [
+        header,
+        format_info('input', test_input),
+        format_info('expected', expected),
+        format_info('output', test_output),
+    ]
+    return '\n'.join(lines)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run ocaml "doctests".')
     input_types = parser.add_mutually_exclusive_group(required=True)
@@ -148,7 +175,7 @@ if __name__ == "__main__":
             htmlcache.write(html)
             logger.debug("Saved {!r} to cache at {!r}".format(URL, html_filepath))
     else:
-        logger.debug("Using cached version at {!r}".format(html_filepath))
+        logger.debug("Using cached version of page at {!r}".format(html_filepath))
         with open(html_filepath, 'r') as htmlcache:
             html = htmlcache.read()
 
@@ -182,21 +209,24 @@ if __name__ == "__main__":
             print('Testing suite {} of {}.'.format(i+1, len(test_suites)))
         for j, (test, expected_output) in enumerate(suite):
             result, output = run_test(test, expected_output, file=FILE)
+            test_str = get_test_str(result, test, output, expected_output)
             if result is False:
                 if output.lower() == 'exception: failure "not implemented".':
+                    if args.verbose:
+                        print(test_str)
                     num_skipped += len(suite) - (j + 1)
-                    print('Skipped suite {}'.format(i + 1))
+                    print('Skipped unimplemented suite {}'.format(i + 1))
                     break
                 num_failed += 1
-                print("Test failed.\n  INPUT:\t{!r}\n  EXPECTED:\t{!r}\n  OUTPUT:\t{!r}".format(
-                    test,
-                    expected_output,
-                    output))
+                print(test_str)
             elif args.verbose:
-                print("Test passed.\n  INPUT:\t{!r}\n  EXPECTED:\t{!r}\n  OUTPUT:\t{!r}".format(
-                    test,
-                    expected_output,
-                    output))
+                print(test_str)
+        if args.verbose:
+            print('-'*80)
     print('Finished testing.')
-    print('{} of {} tests failed.'.format(num_failed, num_tests))
+    fail_summary = '{} of {} tests failed.'.format(num_failed, num_tests)
+    if num_failed > 0:
+        print(colored(fail_summary, 'red'))
+    else:
+        print(fail_summary)
     print('{} tests skipped.'.format(num_skipped))
