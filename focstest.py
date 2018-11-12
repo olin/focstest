@@ -246,5 +246,9 @@ if __name__ == "__main__":
     if num_failed > 0:
         print(colored(fail_summary, 'red'))
     else:
-        print(fail_summary)
-    print('{} tests skipped'.format(num_skipped))
+        print(colored(fail_summary, 'green'))
+    skip_summary = '{} tests skipped'.format(num_skipped)
+    if num_skipped > 0:
+        print(colored(skip_summary, 'yellow'))
+    else:
+        print(skip_summary)
