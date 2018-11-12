@@ -204,9 +204,10 @@ if __name__ == "__main__":
 
         test_suites = [test_suites[i-1] for i in args.tests]
 
+    print('Starting tests')
     for i, suite in enumerate(test_suites):
         if args.verbose:
-            print('Testing suite {} of {}.'.format(i+1, len(test_suites)))
+            print('Testing suite {} of {}'.format(i+1, len(test_suites)))
         for j, (test, expected_output) in enumerate(suite):
             result, output = run_test(test, expected_output, file=FILE)
             test_str = get_test_str(result, test, output, expected_output)
@@ -223,10 +224,10 @@ if __name__ == "__main__":
                 print(test_str)
         if args.verbose:
             print('-'*80)
-    print('Finished testing.')
-    fail_summary = '{} of {} tests failed.'.format(num_failed, num_tests)
+    print('Finished testing')
+    fail_summary = '{} of {} tests failed'.format(num_failed, num_tests)
     if num_failed > 0:
         print(colored(fail_summary, 'red'))
     else:
         print(fail_summary)
-    print('{} tests skipped.'.format(num_skipped))
+    print('{} tests skipped'.format(num_skipped))
