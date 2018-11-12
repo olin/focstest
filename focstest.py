@@ -98,7 +98,7 @@ def run_test(code: str, expected_out: str, file: str = None):
         logger.error("Expected 1 , got {}".format(len(matches)))
     else:
         output = matches[-2]  # don't use empty final match from #quit;;
-        return (output == expected_out, output)
+        return (output.strip() == expected_out.strip(), output)
 
 
 def get_test_str(result: bool, test_input: str, test_output: str, expected: str,
