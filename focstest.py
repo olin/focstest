@@ -5,7 +5,7 @@ import os
 import re
 import subprocess
 import sys
-from urllib.parse import urlparse
+import urllib.parse
 
 from bs4 import BeautifulSoup
 import requests
@@ -17,6 +17,11 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
 
 
+# default url matching
+BASE_URL = "https://rpucella.net/courses/focs-fa18/homeworks/"
+OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"
+HTML_FILE_TEMPLATE = "h{}.html"
+
 # selectors for parsing html
 CODE_BLOCK_SELECTOR = 'div.code pre'  # css selector to get code blocks
 
@@ -25,6 +30,7 @@ TEST_PATTERN = "^# (.+;;)\n(.+)\n"  # pattern to get input and output
 OCAML_PATTERN = "^# (.*)$"  # pattern to grab output of lines
 
 # compile regexes ahead of time
+OCAML_FILE_COMP = re.compile(OCAML_FILE_PATTERN)
 OCAML_COMP = re.compile(OCAML_PATTERN, re.MULTILINE)
 TEST_COMP = re.compile(TEST_PATTERN, re.MULTILINE)
 
@@ -129,7 +135,7 @@ def get_test_str(result: bool, test_input: str, test_output: str, expected: str,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run ocaml "doctests".')
-    input_types = parser.add_mutually_exclusive_group(required=True)
+    input_types = parser.add_mutually_exclusive_group(required=False)
     input_types.add_argument('-u', '--url', type=str,
                              help='a url to scrape tests from')
     # input_types.add_argument('-f', '--file', type=str,
@@ -152,12 +158,23 @@ if __name__ == "__main__":
     URL = args.url
     FILE = getattr(args, 'ocaml-file')
 
+    # infer url if none provided
+    # basically connects 'homeworkX.ml' -> 'https://.../hX.html'
+    if not args.url:
+        filename_match = OCAML_FILE_COMP.match(os.path.basename(FILE))
+        if not filename_match:  # break if filename can't be matched
+            logger.critical('Could not infer url from filename {!r}'.format(FILE))
+            sys.exit(1)
+        else:
+            num = filename_match.group(1)
+            URL = urllib.parse.urljoin(BASE_URL, HTML_FILE_TEMPLATE.format(num))
+
     # get and cache webpage
     CACHE_DIR = 'focstest-cache/'
     if not os.path.exists(CACHE_DIR):
         os.makedirs(CACHE_DIR)
         logger.info('Created cache directory at {!r}'.format(CACHE_DIR))
-    page_name = os.path.basename(urlparse(URL).path)  # get page name from url
+    page_name = os.path.basename(urllib.parse.urlparse(URL).path)  # get page name from url
     html_filepath = os.path.join(CACHE_DIR, page_name)  # local filepath
 
     # get webpage if cached version doesn't already exist
