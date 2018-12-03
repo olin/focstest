@@ -26,13 +26,13 @@ HTML_FILE_TEMPLATE = "h{}.html"
 CODE_BLOCK_SELECTOR = 'div.code pre'  # css selector to get code blocks
 
 # regex patterns for parsing text
-TEST_PATTERN = "^# (.+;;)\n(.+)\n"  # pattern to get input and output
-OCAML_PATTERN = "^# (.*)$"  # pattern to grab output of lines
+TEST_PATTERN = "^(.+;;)\n(.*)$"  # pattern to get input and output
+OCAML_PATTERN = "^(.*)"  # pattern to grab output of lines
 
 # compile regexes ahead of time
 OCAML_FILE_COMP = re.compile(OCAML_FILE_PATTERN)
-OCAML_COMP = re.compile(OCAML_PATTERN, re.MULTILINE)
-TEST_COMP = re.compile(TEST_PATTERN, re.MULTILINE)
+TEST_COMP = re.compile(TEST_PATTERN, re.MULTILINE + re.DOTALL)
+OCAML_COMP = re.compile(OCAML_PATTERN, re.MULTILINE + re.DOTALL)
 
 
 def get_blocks(html):
@@ -54,10 +54,16 @@ def get_tests(text):
 
     :returns: list of test tuples with format (input, expected, output)
     """
-    tests = TEST_COMP.findall(text)
-    if len(tests) == 0:
-        logger.error('Test/response pattern {!r} returned no matches'.format(
-            TEST_PATTERN))
+    def get_test(text):
+        return TEST_COMP.match(text)
+    test_strs = text.split('# ')[1:]
+    tests = []
+    for test_str in test_strs:
+        test = get_test(test_str)
+        if test is None:
+            logger.error('Test/response pattern {!r} returned no matches from string {!r}'.format(TEST_PATTERN, test_str))
+        else:
+            tests.append((test.group(1).strip(), test.group(2).strip()))
     return tests
 
 
@@ -91,20 +97,39 @@ def run_test(code: str, expected_out: str, file: str = None):
     :returns: tuple of a boolean indicating the results of the test and the
         output of the command
     """
+    def equivalent(text):
+        return text
+    def strip_whitespace(text):
+        return text.strip()
+    def normalize_whitespace(text):
+        """Replace instances of whitespace with ' '."""
+        return ''.join(text.split())
+    steps = [
+        equivalent,
+        strip_whitespace,
+        normalize_whitespace
+    ]
     if file is not None:
         command = '#use "{}";;\n'.format(file) + code
     else:
         command = code
     command += "\n#quit;;"
     outs, errs = _run_ocaml_code(command)
-    matches = OCAML_COMP.findall(outs)
+    matches = outs.split('# ')[1:]
     if len(matches) != 3 and file is not None:
-        logger.error("Expected 2 matches, got {}".format(len(matches)))
+        logger.warn("Unable to parse ocaml output, expected 2 matches, got {}".format(len(matches)))
     elif len(matches) != 2 and file is None:
-        logger.error("Expected 1 , got {}".format(len(matches)))
+        logger.error("Unable to parse ocaml output, expected 1 match, got {} ".format(len(matches)))
     else:
+        # compare strings
         output = matches[-2]  # don't use empty final match from #quit;;
-        return (output.strip() == expected_out.strip(), output)
+        for step in steps:
+            method = step.__name__
+            result = step(output) == step(expected_out)
+            if result is True:
+                logger.debug('Test passed with method {!r}'.format(method))
+                break
+        return (result, output, method)
 
 
 def get_test_str(test_input: str, test_output: str, expected: str,
@@ -190,11 +215,10 @@ if __name__ == "__main__":
     # TODO: get titles/descriptions from code blocks
     blocks = get_blocks(html)
     # parse code blocks for tests
-    test_suites = list(enumerate([get_tests(block) for block in blocks], 1))  # list of suites and indicies (starting at 1)
+    test_suites = list(enumerate([get_tests(block) for block in blocks], 1))  # list of suites and indices (starting at 1)
     num_tests = sum([len(suite) for j, suite in test_suites])
     logger.info("Found {} test suites and {} tests total".format(
-        len(test_suites),
-        num_tests))
+        len(test_suites), num_tests))
     # TODO: save tests to file
 
     # run tests
@@ -222,8 +246,13 @@ if __name__ == "__main__":
         if args.verbose:
             print('Testing suite {}'.format(j))
         for k, (test, expected_output) in enumerate(suite):
-            result, output = run_test(test, expected_output, file=FILE)
+            res = run_test(test, expected_output, file=FILE)
             header_temp = ' test {} of {} in suite {}'.format(k+1, len(suite), j)
+            if res is None:  # skip unparsable texts
+                print(colored('Skipped'+header_temp+': Unable to parse output','yellow'))
+                continue
+            else:
+                result, output, method = res
             test_str = get_test_str(test, output, expected_output)
             if result is False:
                 if output.lower() == 'exception: failure "not implemented".':
@@ -237,7 +266,10 @@ if __name__ == "__main__":
                 print(colored('Failed'+header_temp, 'red'))
                 print(test_str)
             elif args.verbose:
-                print(colored('Passed'+header_temp, 'green'))
+                header = 'Passed'+header_temp
+                if method not in ['equivalent', 'strip_whitespace']:
+                    header += ' w/ method '+method
+                print(colored(header, 'green'))
                 print(test_str)
         if args.verbose:
             print('-'*80)
