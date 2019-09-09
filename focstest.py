@@ -135,10 +135,11 @@ def run_test(code: str, expected_out: str, file: str = None):
         # compare strings
         output = matches[-2]  # don't use empty final match from #quit;;
         for step in steps:
+            function = code.split()[0]
             method = step.__name__
             result = step(output) == step(expected_out)
             if result is True:
-                logger.debug('Test passed with method {!r}'.format(method))
+                logger.debug('Test {!r} passed with method {!r}'.format(function, method))
                 break
         return (result, output, method)
 
