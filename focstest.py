@@ -18,9 +18,9 @@ logger.addHandler(logging.StreamHandler())
 
 
 # default url matching
-BASE_URL = "http://rpucella.net/courses/focs-fa19/"
-OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"
-HTML_FILE_TEMPLATE = "homework{}.html"
+BASE_URL = "http://rpucella.net/courses/focs-fa19/"  # website and path to look under
+OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"  # pattern to pass the user-given ocaml file
+HTML_FILE_TEMPLATE = "homework{}.html"  # template to build the html filename given a homework number
 
 # selectors for parsing html
 CODE_BLOCK_SELECTOR = 'pre code'  # css selector to get code blocks
@@ -126,7 +126,7 @@ def run_test(code: str, expected_out: str, file: str = None):
         command = code
     command += "\n#quit;;"
     outs, errs = _run_ocaml_code(command)
-    matches = outs.split('# ')[1:]
+    matches = outs.split('# ')[1:]  # TODO: check if this should change based on the presence of a file
     if len(matches) != 3 and file is not None:
         logger.warn("Unable to parse ocaml output, expected 2 matches, got {}".format(len(matches)))
     elif len(matches) != 2 and file is None:
@@ -157,10 +157,12 @@ def get_test_str(test_input: str, test_output: str, expected: str,
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Run ocaml "doctests".')
+    parser = argparse.ArgumentParser(
+        description='Run ocaml "doctests".',
+        epilog='Submit bugs to <https://github.com/olin/focstest/issues/>.')
     input_types = parser.add_mutually_exclusive_group(required=False)
     input_types.add_argument('-u', '--url', type=str,
-                             help='a url to scrape tests from')
+                             help='a url to scrape tests from (usually automagically guessed based on ocaml-file)')
     # input_types.add_argument('-f', '--file', type=str,
     #                          help='a file to load tests from')
     parser.add_argument('ocaml-file', type=str,
