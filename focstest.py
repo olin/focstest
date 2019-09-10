@@ -98,8 +98,8 @@ def strip_whitespace(text):
 def normalize_whitespace(text):
     """Replace instances of whitespace with ' '.
 
-    >>> normalize_whitespace(' a\\n b cd\\n')
-    'abcd'
+    >>> normalize_whitespace(' a\\n b c \td\\n')
+    'a b c d'
     """
     return ' '.join(text.split())
 
