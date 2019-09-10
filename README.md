@@ -48,6 +48,9 @@ Just read these (mostly real) testimonials:
 > "Oh, yeah, Nathan made one of those"  
 > \-Taylor Sheneman
 
+> "For a small project like this, I'd give it like, a 7"
+> \-Adam Novotny
+
 > "This program is not signed by a trustworthy source. Are you sure you want to
 > run this?"  
 > \-Symantec Endpoint Protection
@@ -60,6 +63,8 @@ Just read these (mostly real) testimonials:
 ### Installation
 
 The python packages `BeautifulSoup`, `requests`, and `termcolor` are required. Install them with `pip install bs4 requests termcolor`, or `pipenv install`.
+
+The `ocaml` interpreter needs to be installed and on your PATH.
 
 ### Usage
 
@@ -89,8 +94,37 @@ optional arguments:
                         test suites to skip, indexed from 1
 ```
 
+For most homeworks, the workflow that I've used is going question by question
+with the `-U` flag (each "test suite" is a parsed block of code, which generally
+corresponds to the homework questions):
+```shell
+$ # work on question 1
+$ focstest h1.ml -U 1
+$ # work more on question 1
+$ focstest h1.ml -U 1
+$ # finish and start question 2
+$ focstest h1.ml -U 2
+$ # start to doubt that focstest works and want more explicit output
+$ focstest h1.ml -U 2 -v
+$ # ...eventually finish the homework and run everything to double-check
+$ focstest h1.ml
+$ # become increasingly paranoid that focstest isn't finding my mistakes and
+$ # inspect each test one-by-one
+$ focstest h1.ml -v
+```
+
+### What It Can't Do (Yet?)
+
+- Detect syntax errors/typos in expected cases (comparing an expected `[4  2; 1]` to your program's output `[4; 2; 1]` will tell you that your output is wrong).
+- Check if the same items exist in the output, regardless of order (if you need to build a set of items and the printed output if in a different order than the expected, it will still fail).
+- Submit the assignment via email for you.
+
 ## Development
 
+Issues and Pull Requests are welcome!
+
 Run `pipenv install --dev` to install all of the dev packages.
+
+Run tests with `python -m unittest discover`.
 
 Build an executable of your own with `pyinstaller -F focstest.py`.
