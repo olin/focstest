@@ -87,6 +87,23 @@ def _run_ocaml_code(code):
     return (outs, errs)
 
 
+# text normalization techniques
+
+def equivalent(text):
+    return text
+
+def strip_whitespace(text):
+    return text.strip()
+
+def normalize_whitespace(text):
+    """Replace instances of whitespace with ' '.
+
+    >>> normalize_whitespace(' a\\n b cd\\n')
+    'abcd'
+    """
+    return ' '.join(text.split())
+
+
 def run_test(code: str, expected_out: str, file: str = None):
     """Check the output of a line of code against an expected value.
 
@@ -97,13 +114,7 @@ def run_test(code: str, expected_out: str, file: str = None):
     :returns: tuple of a boolean indicating the results of the test and the
         output of the command
     """
-    def equivalent(text):
-        return text
-    def strip_whitespace(text):
-        return text.strip()
-    def normalize_whitespace(text):
-        """Replace instances of whitespace with ' '."""
-        return ''.join(text.split())
+
     steps = [
         equivalent,
         strip_whitespace,
