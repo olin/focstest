@@ -268,13 +268,14 @@ if __name__ == "__main__":
             else:
                 result, output, method = res
             test_str = get_test_str(test, output, expected_output)
+            function = test.split()[0]
             if result is False:
-                if output.lower() == 'exception: failure "not implemented".':
+                if output.strip().lower() == 'exception: failure "not implemented".':
                     if args.verbose:
                         print(colored('Unimplemented'+header_temp, 'yellow'))
                         print(test_str)
                     num_skipped += len(suite) - (k + 1)
-                    print(colored('Skipped unimplemented suite {}'.format(j), 'yellow'))
+                    print(colored('Skipped unimplemented suite {} {!r}'.format(j, function), 'yellow'))
                     break
                 num_failed += 1
                 print(colored('Failed'+header_temp, 'red'))
