@@ -48,7 +48,7 @@ Just read these (mostly real) testimonials:
 > "Oh, yeah, Nathan made one of those"  
 > \-Taylor Sheneman
 
-> "For a small project like this, I'd give it like, a 7"
+> "For a small project like this, I'd give it like, a 7"  
 > \-Adam Novotny
 
 > "This program is not signed by a trustworthy source. Are you sure you want to
