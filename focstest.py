@@ -128,7 +128,7 @@ def run_test(code: str, expected_out: str, file: str = None):
     outs, errs = _run_ocaml_code(command)
     matches = outs.split('# ')[1:]  # TODO: check if this should change based on the presence of a file
     if len(matches) != 3 and file is not None:
-        logger.warn("Unable to parse ocaml output, expected 2 matches, got {}".format(len(matches)))
+        logger.warning("Unable to parse ocaml output, expected 2 matches, got {}".format(len(matches)))
     elif len(matches) != 2 and file is None:
         logger.error("Unable to parse ocaml output, expected 1 match, got {} ".format(len(matches)))
     else:
