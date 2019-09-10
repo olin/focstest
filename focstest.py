@@ -18,12 +18,12 @@ logger.addHandler(logging.StreamHandler())
 
 
 # default url matching
-BASE_URL = "http://rpucella.net/courses/focs-fa18/homeworks/"
+BASE_URL = "http://rpucella.net/courses/focs-fa19/"
 OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"
-HTML_FILE_TEMPLATE = "h{}.html"
+HTML_FILE_TEMPLATE = "homework{}.html"
 
 # selectors for parsing html
-CODE_BLOCK_SELECTOR = 'div.code pre'  # css selector to get code blocks
+CODE_BLOCK_SELECTOR = 'pre code'  # css selector to get code blocks
 
 # regex patterns for parsing text
 TEST_PATTERN = "^(.+;;)\n(.*)$"  # pattern to get input and output
