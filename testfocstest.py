@@ -1,6 +1,16 @@
+"""Tests for focstest.py, from the creators of focstest.py"""
 import unittest
+import doctest
 
+import focstest
 from focstest import equivalent, strip_whitespace, normalize_whitespace
+
+
+def load_tests(loader, tests, ignore):
+    # run doctests from within unittest
+    # see: <https://docs.python.org/3/library/doctest.html#unittest-api>
+    tests.addTests(doctest.DocTestSuite(focstest))
+    return tests
 
 
 class TestTextNormalization(unittest.TestCase):
