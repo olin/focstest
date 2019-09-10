@@ -229,7 +229,7 @@ if __name__ == "__main__":
     # TODO: get titles/descriptions from code blocks
     blocks = get_blocks(html)
     # parse code blocks for tests
-    test_suites = list(enumerate([get_tests(block) for block in blocks], 1))  # list of suites and indices (starting at 1)
+    test_suites = list(enumerate([get_tests(block) for block in blocks if get_tests(block)], 1))  # list of suites and indices (starting at 1) (skipping empty suites)
     num_tests = sum([len(suite) for j, suite in test_suites])
     logger.info("Found {} test suites and {} tests total".format(
         len(test_suites), num_tests))
