@@ -116,7 +116,7 @@ $ focstest h1.ml -v
 ### What It Can't Do (Yet?)
 
 - Detect syntax errors/typos in expected cases (comparing an expected `[4  2; 1]` to your program's output `[4; 2; 1]` will tell you that your output is wrong).
-- Check if the same items exist in the output, regardless of order (if you need to build a set of items and the printed output if in a different order than the expected, it will still fail).
+- Check if the same items exist in the output, regardless of order (if you need to build a set of items and the printed output is in a different order than the expected, it will still fail).
 - Submit the assignment via email for you.
 
 ## Development
