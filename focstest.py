@@ -179,10 +179,11 @@ def infer_url(filepath):
     return url
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description='Run ocaml "doctests".',
         epilog='Submit bugs to <https://github.com/olin/focstest/issues/>.')
+    # parser.add_argument('--version', action='version', version='')
     input_types = parser.add_mutually_exclusive_group(required=False)
     input_types.add_argument('-u', '--url', type=str,
                              help='a url to scrape tests from (usually automagically guessed based on ocaml-file)')
@@ -318,3 +319,7 @@ if __name__ == "__main__":
         print(colored(skip_summary, 'yellow'))
     else:
         print(skip_summary)
+
+
+if __name__ == "__main__":
+    main()
