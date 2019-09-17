@@ -13,4 +13,3 @@ termcolor = "*"
 
 [dev-packages]
 "flake8" = "*"
-pyinstaller = "*"
