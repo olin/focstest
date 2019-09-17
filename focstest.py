@@ -18,7 +18,7 @@ logger.addHandler(logging.StreamHandler())
 
 
 # default url matching
-BASE_URL = "http://rpucella.net/courses/focs-fa19/"  # website and path to look under
+BASE_URL = "http://rpucella.net/courses/focs-fa19/homeworks/"  # website and path to look under
 OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"  # pattern to pass the user-given ocaml file
 HTML_FILE_TEMPLATE = "homework{}.html"  # template to build the html filename given a homework number
 
