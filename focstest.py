@@ -135,7 +135,7 @@ def run_test(code: str, expected_out: str, file: str = None):
         # compare strings
         output = matches[-2]  # don't use empty final match from #quit;;
         for step in steps:
-            function = code.split()[0] # grab the first word of the command (probably the function name)
+            function = code.split()[0]  # grab the first word of the command (probably the function name)
             method = step.__name__
             result = step(output) == step(expected_out)
             if result is True:
