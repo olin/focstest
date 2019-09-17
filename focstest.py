@@ -289,7 +289,7 @@ if __name__ == "__main__":
         if args.verbose:
             print('-'*80)
     print('Finished testing')
-    fail_summary = '{} of {} tests failed'.format(num_failed, num_tests)
+    fail_summary = '{} of {} tests failed'.format(num_failed, num_tests - num_skipped)
     if num_failed > 0:
         print(colored(fail_summary, 'red'))
     else:
