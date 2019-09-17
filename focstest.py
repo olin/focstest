@@ -135,7 +135,7 @@ def run_test(code: str, expected_out: str, file: str = None):
         # compare strings
         output = matches[-2]  # don't use empty final match from #quit;;
         for step in steps:
-            function = code.split()[0]
+            function = code.split()[0] # grab the first word of the command (probably the function name)
             method = step.__name__
             result = step(output) == step(expected_out)
             if result is True:
@@ -229,7 +229,7 @@ if __name__ == "__main__":
     # TODO: get titles/descriptions from code blocks
     blocks = get_blocks(html)
     # parse code blocks for tests
-    test_suites = list(enumerate([get_tests(block) for block in blocks if get_tests(block)], 1))  # list of suites and indices (starting at 1) (skipping empty suites)
+    test_suites = list(enumerate(filter(None, (get_tests(b) for b in blocks)), 1))  # list of suites and indices (starting at 1) (skipping empty suites)
     num_tests = sum([len(suite) for j, suite in test_suites])
     logger.info("Found {} test suites and {} tests total".format(
         len(test_suites), num_tests))
