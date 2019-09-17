@@ -156,6 +156,28 @@ def get_test_str(test_input: str, test_output: str, expected: str,
     return '\n'.join(lines)
 
 
+def infer_url(filepath):
+    """Infer a url based on a filename.
+
+    Basically connects 'homeworkX.ml' -> 'http://.../hX.html'
+
+    Returns: False if the filename could not be named
+
+    >>> infer_url('foo/bar.ml')
+    False
+
+    >>> infer_url('foo/bar/homework1.ml')
+    'http://rpucella.net/courses/focs-fa19/homeworks/homework1.html'
+    """
+    filename = os.path.basename(filepath)
+    match = OCAML_FILE_COMP.match(filename)
+    if not match:
+        return False
+    hw_num = match.group(1)
+    url = urllib.parse.urljoin(BASE_URL, HTML_FILE_TEMPLATE.format(hw_num))
+    return url
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Run ocaml "doctests".',
@@ -186,16 +208,13 @@ if __name__ == "__main__":
     URL = args.url
     FILE = getattr(args, 'ocaml-file')
 
-    # infer url if none provided
-    # basically connects 'homeworkX.ml' -> 'https://.../hX.html'
     if not args.url:
-        filename_match = OCAML_FILE_COMP.match(os.path.basename(FILE))
-        if not filename_match:  # break if filename can't be matched
-            logger.critical('Could not infer url from filename {!r}'.format(FILE))
+        url_guess = infer_url(args.url)
+        if not url_guess:  # break if filename can't be matched
+            logger.critical('Could not infer url from filename {!r}. Try passing a url manually with the `-u`/`--url` flag.'.format(FILE))
             sys.exit(1)
         else:
-            num = filename_match.group(1)
-            URL = urllib.parse.urljoin(BASE_URL, HTML_FILE_TEMPLATE.format(num))
+            URL = url_guess
 
     # get and cache webpage
     CACHE_DIR = 'focstest-cache/'
