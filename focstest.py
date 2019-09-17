@@ -103,6 +103,11 @@ def normalize_whitespace(text):
     """
     return ' '.join(text.split())
 
+def sorted_list(text):
+    """Normalize whitespace, then (crudely) parse output as a list and sort it"""
+    text = normalize_whitespace(text)
+    return text[text.index("[") + 1:text.rindex("]")].split(";").sort()
+
 
 def run_test(code: str, expected_out: str, file: str = None):
     """Check the output of a line of code against an expected value.
@@ -120,6 +125,10 @@ def run_test(code: str, expected_out: str, file: str = None):
         strip_whitespace,
         normalize_whitespace
     ]
+
+    if args.unordered_lists:
+        steps.append(sorted_list)
+
     if file is not None:
         command = '#use "{}";;\n'.format(file) + code
     else:
@@ -174,6 +183,8 @@ if __name__ == "__main__":
                         help='the program log level')
     parser.add_argument('-uc', '--update-cache', action='store_true',
                         help='update cached files')
+    parser.add_argument('-ul', '--unordered-lists', action='store_true',
+                        help="Ignore list order when comparing equality")
     test_selection = parser.add_mutually_exclusive_group(required=False)
     test_selection.add_argument('-U', '--use-suites', metavar='N', type=int, nargs='*',
                                 help='test suites to use exclusively, indexed from 1')
