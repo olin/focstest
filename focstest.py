@@ -18,7 +18,7 @@ logger.addHandler(logging.StreamHandler())
 
 
 # default url matching
-BASE_URL = "http://rpucella.net/courses/focs-fa19/"  # website and path to look under
+BASE_URL = "http://rpucella.net/courses/focs-fa19/homeworks/"  # website and path to look under
 OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"  # pattern to pass the user-given ocaml file
 HTML_FILE_TEMPLATE = "homework{}.html"  # template to build the html filename given a homework number
 
@@ -128,17 +128,18 @@ def run_test(code: str, expected_out: str, file: str = None):
     outs, errs = _run_ocaml_code(command)
     matches = outs.split('# ')[1:]  # TODO: check if this should change based on the presence of a file
     if len(matches) != 3 and file is not None:
-        logger.warn("Unable to parse ocaml output, expected 2 matches, got {}".format(len(matches)))
+        logger.warning("Unable to parse ocaml output, expected 2 matches, got {}".format(len(matches)))
     elif len(matches) != 2 and file is None:
         logger.error("Unable to parse ocaml output, expected 1 match, got {} ".format(len(matches)))
     else:
         # compare strings
         output = matches[-2]  # don't use empty final match from #quit;;
         for step in steps:
+            function = code.split()[0]  # grab the first word of the command (probably the function name)
             method = step.__name__
             result = step(output) == step(expected_out)
             if result is True:
-                logger.debug('Test passed with method {!r}'.format(method))
+                logger.debug('Test {!r} passed with method {!r}'.format(function, method))
                 break
         return (result, output, method)
 
@@ -228,7 +229,7 @@ if __name__ == "__main__":
     # TODO: get titles/descriptions from code blocks
     blocks = get_blocks(html)
     # parse code blocks for tests
-    test_suites = list(enumerate([get_tests(block) for block in blocks], 1))  # list of suites and indices (starting at 1)
+    test_suites = list(enumerate(filter(None, (get_tests(b) for b in blocks)), 1))  # list of suites and indices (starting at 1) (skipping empty suites)
     num_tests = sum([len(suite) for j, suite in test_suites])
     logger.info("Found {} test suites and {} tests total".format(
         len(test_suites), num_tests))
@@ -267,13 +268,14 @@ if __name__ == "__main__":
             else:
                 result, output, method = res
             test_str = get_test_str(test, output, expected_output)
+            function = test.split()[0]
             if result is False:
-                if output.lower() == 'exception: failure "not implemented".':
+                if output.strip().lower() == 'exception: failure "not implemented".':
                     if args.verbose:
                         print(colored('Unimplemented'+header_temp, 'yellow'))
                         print(test_str)
                     num_skipped += len(suite) - (k + 1)
-                    print(colored('Skipped unimplemented suite {}'.format(j), 'yellow'))
+                    print(colored('Skipped unimplemented suite {} {!r}'.format(j, function), 'yellow'))
                     break
                 num_failed += 1
                 print(colored('Failed'+header_temp, 'red'))
