@@ -2,6 +2,7 @@
 import argparse
 import logging
 import os
+from pkg_resources import get_distribution, DistributionNotFound
 import re
 import subprocess
 import sys
@@ -15,6 +16,15 @@ from termcolor import colored
 logger = logging.getLogger(name=__name__)  # create logger in order to change level later
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler())
+
+
+# get version from setuptools installation
+try:
+    __version__ = get_distribution('focstest').version
+except DistributionNotFound:
+    # not installed
+    # TODO: try git directly
+    __version__ = 'unknown, try `git describe`'
 
 
 # default url matching
@@ -183,7 +193,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Run ocaml "doctests".',
         epilog='Submit bugs to <https://github.com/olin/focstest/issues/>.')
-    # parser.add_argument('--version', action='version', version='')
+    parser.add_argument('--version', action='version', version=__version__)
     input_types = parser.add_mutually_exclusive_group(required=False)
     input_types.add_argument('-u', '--url', type=str,
                              help='a url to scrape tests from (usually automagically guessed based on ocaml-file)')
