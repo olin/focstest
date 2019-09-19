@@ -79,7 +79,7 @@ this by cloning the source repository to somewhere on your machine and running
 `pip install`:
 
 ```shell
-git clone https://github.com/olin/focstest.git
+git clone --branch=release https://github.com/olin/focstest.git  # clone a stable version
 pip install focstest/
 ```
 
