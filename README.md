@@ -1,8 +1,10 @@
 # focstest
+_(you can skip to [Getting Started](#getting-started))_
 
-So, you're in Olin's FoCS course and you've started to fill out the functions
-for this week's homework assignment. You're looking at the homework document and
-you find a bunch of blocks like these:
+So, you're in Olin's FoCS (Foundations of Computer Science) course and you've
+started to fill out the functions for this week's homework assignment. You're
+looking at the homework document and you find a bunch of blocks of example
+outputs like these:
 ```
 # expt 1 0;;
 - : int = 1
@@ -17,7 +19,7 @@ yourself, but this is a computer science course! There's got to be a slightly
 faster way that may or may not have taken more development time to create than
 it saved...
 
-Introducing...
+Introducing:
 ```
   __                _            _
  / _| ___   ___ ___| |_ ___  ___| |_
@@ -60,19 +62,70 @@ Just read these (mostly real) testimonials:
 
 ## Getting Started
 
+### Prerequisites
+
+You'll need Python 3.5+ and `pip`.
+
+The `ocaml` interpreter needs to be installed and on your PATH (you can run it
+from a terminal).
+
 ### Installation
 
-The python packages `BeautifulSoup`, `requests`, and `termcolor` are required. Install them with `pip install bs4 requests termcolor`, or `pipenv install`.
+#### Pip
 
-The `ocaml` interpreter needs to be installed and on your PATH.
+The recommended way to install `focstest` is through `pip`, which will install the
+necessary package requirements and add `focstest` to your terminal. You can do
+this by cloning the source repository to somewhere on your machine and running
+`pip install`:
+
+```shell
+git clone https://github.com/olin/focstest.git
+pip install focstest/
+```
+
+You should now be able to run `focstest --help` and see the
+[usage message below](#usage).
+
+#### Manual
+
+Alternatively, you can run the `focstest.py` script directly after installing
+the necessary requirements:
+
+The python packages `BeautifulSoup`, `requests`, and `termcolor` are required.
+Install them with `pip install bs4 requests termcolor`, or `pipenv install`.
 
 ### Usage
 
-`focstest` uses a standard python-powered command-line interface. You can always ask it for help with `--help` or `-h`.
+**Note/Disclaimer: `focstest` only compares the given output with your code's output.
+Generally, the FoCS examples are not exhaustive and are often more nuanced than
+a direct comparison. You'll still need to understand _what the problem is asking_
+and _whether your output makes sense_.**
+
+`focstest` works by parsing doctest-like blocks of ocaml code from a website,
+and then running them with your provided ocaml file loaded to compare the
+outputs. If you give it a homework file, it can infer the relevant webpage to
+scrape tests from:
+```
+focstest homework2.ml
+```
+but you can also give it a url directly:
+```
+focstest homework2.ml --url http://rpucella.net/courses/focs-fa19/homeworks/homework2.html
+```
+The html files are _cached locally_ to reduce the number of network requests. If
+the website has been updated with corrections or additions and you want to
+refresh `focstest`'s copy, use the `--update-cache` flag:
+```
+focstest homework2.ml --update-cache
+```
+
+
+`focstest` uses a standard python-powered command-line interface. You can always
+ask it for help with `--help` or `-h`.
 
 ```
-$ ./focstest.py --help
-usage: focstest.py [-h] [-u URL] [-v] [--log-level {debug,info,warning}] [-uc]
+$ focstest --help
+usage: focstest [-h] [-u URL] [-v] [--log-level {debug,info,warning}] [-uc]
                    [-U [N [N ...]] | -S [N [N ...]]]
                    ocaml-file
 
@@ -127,4 +180,4 @@ Run `pipenv install --dev` to install all of the dev packages.
 
 Run tests with `python -m unittest discover`.
 
-Build an executable of your own with `pyinstaller -F focstest.py`.
+Want to use it while you hack on it? Install it with `pip install -e`.
