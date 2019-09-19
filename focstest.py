@@ -6,6 +6,7 @@ from pkg_resources import get_distribution, DistributionNotFound
 import re
 import subprocess
 import sys
+import tempfile
 import urllib.parse
 
 from bs4 import BeautifulSoup
@@ -229,7 +230,8 @@ def main():
             URL = url_guess
 
     # get and cache webpage
-    CACHE_DIR = 'focstest-cache/'
+    temp_dir = tempfile.gettempdir()  # most likely /tmp/ on Linux
+    CACHE_DIR = os.path.join(temp_dir, 'focstest-cache')
     if not os.path.exists(CACHE_DIR):
         os.makedirs(CACHE_DIR)
         logger.info('Created cache directory at {!r}'.format(CACHE_DIR))
