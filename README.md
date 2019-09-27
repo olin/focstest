@@ -138,8 +138,6 @@ optional arguments:
   -h, --help            show this help message and exit
   -u URL, --url URL     a url to scrape tests from
   -v, --verbose         increase test output verbosity
-  --log-level {debug,info,warning}
-                        the program log level
   -uc, --update-cache   update cached files
   -U [N [N ...]], --use-suites [N [N ...]]
                         test suites to use exclusively, indexed from 1
@@ -181,3 +179,10 @@ Run `pipenv install --dev` to install all of the dev packages.
 Run tests with `python -m unittest discover`.
 
 Want to use it while you hack on it? Install it with `pip install -e`.
+
+You can set `focstest`'s logging level with the `LOG_LEVEL` environment variable.
+The possible values are all of python's usual logging levels, set it to `DEBUG`
+for more output.
+```shell
+$ LOG_LEVEL=DEBUG focstest homework3.ml
+```
