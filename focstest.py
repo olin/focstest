@@ -196,10 +196,8 @@ def main():
         epilog='Submit bugs to <https://github.com/olin/focstest/issues/>.')
     parser.add_argument('--version', action='version', version=__version__)
     input_types = parser.add_mutually_exclusive_group(required=False)
-    input_types.add_argument('-u', '--url', type=str,
-                             help='a url to scrape tests from (usually automagically guessed based on ocaml-file)')
-    # input_types.add_argument('-f', '--file', type=str,
-    #                          help='a file to load tests from')
+    input_types.add_argument('--url', type=str,
+                             help='a url to scrape tests from (usually automagically guessed from ocaml-file)')
     parser.add_argument('ocaml-file', type=str,
                         help='the ocaml file to test against')
     parser.add_argument('-v', '--verbose', action='store_true',
@@ -207,9 +205,9 @@ def main():
     parser.add_argument('-uc', '--update-cache', action='store_true',
                         help='update cached files')
     test_selection = parser.add_mutually_exclusive_group(required=False)
-    test_selection.add_argument('-U', '--use-suites', metavar='N', type=int, nargs='*',
+    test_selection.add_argument('-u', '--use-suites', metavar='N', type=int, nargs='*',
                                 help='test suites to use exclusively, indexed from 1')
-    test_selection.add_argument('-S', '--skip-suites', metavar='N', type=int, nargs='*',
+    test_selection.add_argument('-s', '--skip-suites', metavar='N', type=int, nargs='*',
                                 help='test suites to skip, indexed from 1')
     args = parser.parse_args()
 
