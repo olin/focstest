@@ -210,7 +210,7 @@ if __name__ == "__main__":
     FILE = getattr(args, 'ocaml-file')
 
     if not args.url:
-        url_guess = infer_url(args.url)
+        url_guess = infer_url(FILE)
         if not url_guess:  # break if filename can't be matched
             logger.critical('Could not infer url from filename {!r}. Try passing a url manually with the `-u`/`--url` flag.'.format(FILE))
             sys.exit(1)
