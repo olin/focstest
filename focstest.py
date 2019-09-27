@@ -229,7 +229,7 @@ def main():
     if not args.url:
         url_guess = infer_url(FILE)
         if not url_guess:  # break if filename can't be matched
-            logger.critical('Could not infer url from filename {!r}. Try passing a url manually with the `-u`/`--url` flag.'.format(FILE))
+            logger.critical('Could not infer url from filename {!r}. Try passing a url manually with the `--url` flag.'.format(FILE))
             sys.exit(1)
         else:
             URL = url_guess

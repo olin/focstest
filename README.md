@@ -119,15 +119,14 @@ refresh `focstest`'s copy, use the `--update-cache` flag:
 focstest homework2.ml --update-cache
 ```
 
-
 `focstest` uses a standard python-powered command-line interface. You can always
 ask it for help with `--help` or `-h`.
 
-```
+```shell
 $ focstest --help
-usage: focstest [-h] [-u URL] [-v] [--log-level {debug,info,warning}] [-uc]
-                   [-U [N [N ...]] | -S [N [N ...]]]
-                   ocaml-file
+usage: focstest [-h] [--version] [--url URL] [-v] [-uc] [-u [N [N ...]] | -s
+                [N [N ...]]]
+                ocaml-file
 
 Run ocaml "doctests".
 
@@ -136,13 +135,17 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -u URL, --url URL     a url to scrape tests from
+  --version             show program's version number and exit
+  --url URL             a url to scrape tests from (usually automagically
+                        guessed from ocaml-file)
   -v, --verbose         increase test output verbosity
   -uc, --update-cache   update cached files
-  -U [N [N ...]], --use-suites [N [N ...]]
+  -u [N [N ...]], --use-suites [N [N ...]]
                         test suites to use exclusively, indexed from 1
-  -S [N [N ...]], --skip-suites [N [N ...]]
+  -s [N [N ...]], --skip-suites [N [N ...]]
                         test suites to skip, indexed from 1
+
+Submit bugs to <https://github.com/olin/focstest/issues/>.
 ```
 
 For most homeworks, the workflow that I've used is going question by question
