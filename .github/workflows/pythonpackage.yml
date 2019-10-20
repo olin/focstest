@@ -23,7 +23,7 @@ jobs:
         pipenv install --dev
     - name: Test with unittest
       run: |
-        python3 -m unittest discover -v
+        pipenv run python -m unittest discover -v
     - name: Install with pip
       run: |
         pip install .
