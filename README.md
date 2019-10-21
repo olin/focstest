@@ -149,17 +149,17 @@ Submit bugs to <https://github.com/olin/focstest/issues/>.
 ```
 
 For most homeworks, the workflow that I've used is going question by question
-with the `-U` flag (each "test suite" is a parsed block of code, which generally
+with the `-u` flag (each "test suite" is a parsed block of code, which generally
 corresponds to the homework questions):
 ```shell
 $ # work on question 1
-$ focstest h1.ml -U 1
+$ focstest h1.ml -u 1
 $ # work more on question 1
-$ focstest h1.ml -U 1
+$ focstest h1.ml -u 1
 $ # finish and start question 2
-$ focstest h1.ml -U 2
+$ focstest h1.ml -u 2
 $ # start to doubt that focstest works and want more explicit output
-$ focstest h1.ml -U 2 -v
+$ focstest h1.ml -u 2 -v
 $ # ...eventually finish the homework and run everything to double-check
 $ focstest h1.ml
 $ # become increasingly paranoid that focstest isn't finding my mistakes and
