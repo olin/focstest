@@ -79,7 +79,7 @@ this by cloning the source repository to somewhere on your machine and running
 `pip install`:
 
 ```shell
-git clone https://github.com/olin/focstest.git
+git clone --branch=release https://github.com/olin/focstest.git  # clone a stable version
 pip install focstest/
 ```
 
@@ -119,15 +119,14 @@ refresh `focstest`'s copy, use the `--update-cache` flag:
 focstest homework2.ml --update-cache
 ```
 
-
 `focstest` uses a standard python-powered command-line interface. You can always
 ask it for help with `--help` or `-h`.
 
-```
+```shell
 $ focstest --help
-usage: focstest [-h] [-u URL] [-v] [--log-level {debug,info,warning}] [-uc]
-                   [-U [N [N ...]] | -S [N [N ...]]]
-                   ocaml-file
+usage: focstest [-h] [--version] [--url URL] [-v] [-uc] [-u [N [N ...]] | -s
+                [N [N ...]]]
+                ocaml-file
 
 Run ocaml "doctests".
 
@@ -136,15 +135,17 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -u URL, --url URL     a url to scrape tests from
+  --version             show program's version number and exit
+  --url URL             a url to scrape tests from (usually automagically
+                        guessed from ocaml-file)
   -v, --verbose         increase test output verbosity
-  --log-level {debug,info,warning}
-                        the program log level
   -uc, --update-cache   update cached files
-  -U [N [N ...]], --use-suites [N [N ...]]
+  -u [N [N ...]], --use-suites [N [N ...]]
                         test suites to use exclusively, indexed from 1
-  -S [N [N ...]], --skip-suites [N [N ...]]
+  -s [N [N ...]], --skip-suites [N [N ...]]
                         test suites to skip, indexed from 1
+
+Submit bugs to <https://github.com/olin/focstest/issues/>.
 ```
 
 For most homeworks, the workflow that I've used is going question by question
@@ -181,3 +182,10 @@ Run `pipenv install --dev` to install all of the dev packages.
 Run tests with `python -m unittest discover`.
 
 Want to use it while you hack on it? Install it with `pip install -e`.
+
+You can set `focstest`'s logging level with the `LOG_LEVEL` environment variable.
+The possible values are all of python's usual logging levels, set it to `DEBUG`
+for more output.
+```shell
+$ LOG_LEVEL=DEBUG focstest homework3.ml
+```

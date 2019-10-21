@@ -196,27 +196,32 @@ def main():
         epilog='Submit bugs to <https://github.com/olin/focstest/issues/>.')
     parser.add_argument('--version', action='version', version=__version__)
     input_types = parser.add_mutually_exclusive_group(required=False)
-    input_types.add_argument('-u', '--url', type=str,
-                             help='a url to scrape tests from (usually automagically guessed based on ocaml-file)')
-    # input_types.add_argument('-f', '--file', type=str,
-    #                          help='a file to load tests from')
+    input_types.add_argument('--url', type=str,
+                             help='a url to scrape tests from (usually automagically guessed from ocaml-file)')
     parser.add_argument('ocaml-file', type=str,
                         help='the ocaml file to test against')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='increase test output verbosity')
-    parser.add_argument('--log-level', choices=['debug', 'info', 'warning'],
-                        help='the program log level')
     parser.add_argument('-uc', '--update-cache', action='store_true',
                         help='update cached files')
     test_selection = parser.add_mutually_exclusive_group(required=False)
-    test_selection.add_argument('-U', '--use-suites', metavar='N', type=int, nargs='*',
+    test_selection.add_argument('-u', '--use-suites', metavar='N', type=int, nargs='*',
                                 help='test suites to use exclusively, indexed from 1')
-    test_selection.add_argument('-S', '--skip-suites', metavar='N', type=int, nargs='*',
+    test_selection.add_argument('-s', '--skip-suites', metavar='N', type=int, nargs='*',
                                 help='test suites to skip, indexed from 1')
     args = parser.parse_args()
-    if args.log_level:
-        numeric_level = getattr(logging, args.log_level.upper(), None)
-        logger.setLevel(numeric_level)
+
+    # check environment var for logging level
+    log_level = os.getenv('LOG_LEVEL')
+    if log_level is not None:
+        log_level = log_level.upper()
+        try:
+            numeric_level = getattr(logging, os.getenv('LOG_LEVEL'))
+        except AttributeError as e:
+            logging.warning("Found 'LOG_LEVEL' env var, but was unable to parse: {}".format(e))
+        else:
+            logger.setLevel(numeric_level)
+            logger.debug('Set logging level to {!r} ({}) from env var'.format(log_level, numeric_level))
 
     URL = args.url
     FILE = getattr(args, 'ocaml-file')
@@ -224,7 +229,7 @@ def main():
     if not args.url:
         url_guess = infer_url(FILE)
         if not url_guess:  # break if filename can't be matched
-            logger.critical('Could not infer url from filename {!r}. Try passing a url manually with the `-u`/`--url` flag.'.format(FILE))
+            logger.critical('Could not infer url from filename {!r}. Try passing a url manually with the `--url` flag.'.format(FILE))
             sys.exit(1)
         else:
             URL = url_guess
