@@ -37,7 +37,7 @@ HTML_FILE_TEMPLATE = "homework{}.html"  # template to build the html filename gi
 CODE_BLOCK_SELECTOR = 'pre code'  # css selector to get code blocks
 
 # regex patterns for parsing text
-TEST_PATTERN = "^(.+;;)\n(.*)$"  # pattern to get input and output
+TEST_PATTERN = "^(.+;;)\s*\n(.*)$"  # pattern to get input and output
 OCAML_PATTERN = "^(.*)"  # pattern to grab output of lines
 
 # compile regexes ahead of time
