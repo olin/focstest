@@ -6,3 +6,5 @@ dist/
 # python-related
 __pycache__/
 *.pyc
+.eggs/
+*.egg-info
