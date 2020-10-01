@@ -29,7 +29,7 @@ except DistributionNotFound:
 
 
 # default url matching
-BASE_URL = "http://rpucella.net/courses/focs-fa19/homeworks/"  # website and path to look under
+BASE_URL = "http://rpucella.net/courses/focs-fa20/homeworks/"  # website and path to look under
 OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"  # pattern to pass the user-given ocaml file
 HTML_FILE_TEMPLATE = "homework{}.html"  # template to build the html filename given a homework number
 
@@ -179,7 +179,7 @@ def infer_url(filepath):
     False
 
     >>> infer_url('foo/bar/homework1.ml')
-    'http://rpucella.net/courses/focs-fa19/homeworks/homework1.html'
+    'http://rpucella.net/courses/focs-fa20/homeworks/homework1.html'
     """
     filename = os.path.basename(filepath)
     match = OCAML_FILE_COMP.match(filename)
