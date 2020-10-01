@@ -179,7 +179,7 @@ def infer_url(filepath):
     False
 
     >>> infer_url('foo/bar/homework1.ml')
-    'http://rpucella.net/courses/focs-fa19/homeworks/homework1.html'
+    'http://rpucella.net/courses/focs-fa20/homeworks/homework1.html'
     """
     filename = os.path.basename(filepath)
     match = OCAML_FILE_COMP.match(filename)
