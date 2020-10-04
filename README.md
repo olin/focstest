@@ -1,3 +1,5 @@
+**WARNING: this branch is deprecated. Use the `master` branch instead.**
+
 # focstest
 _(you can skip to [Getting Started](#getting-started))_
 

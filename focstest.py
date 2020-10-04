@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import urllib.parse
+import warnings
 
 from bs4 import BeautifulSoup
 import requests
@@ -27,6 +28,11 @@ except DistributionNotFound:
     # TODO: try git directly
     __version__ = 'unknown, try `git describe`'
 
+warnings.warn(
+"""This `release` branch is deprecated and will not receive further updates.
+To update to the latest version of focstest, switch to the `master` branch, pull, and install again.
+See <https://github.com/olin/focstest#installation> for more information.
+""", FutureWarning)
 
 # default url matching
 BASE_URL = "http://rpucella.net/courses/focs-fa20/homeworks/"  # website and path to look under
