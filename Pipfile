@@ -13,3 +13,8 @@ termcolor = "*"
 
 [dev-packages]
 "flake8" = "*"
+mypy = "*"
+types-setuptools = "*"
+types-beautifulsoup4 = "*"
+types-requests = "*"
+types-termcolor = "*"
