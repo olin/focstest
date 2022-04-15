@@ -29,9 +29,9 @@ except DistributionNotFound:
 
 
 # default url matching
-BASE_URL = "http://rpucella.net/courses/focs-fa20/homeworks/"  # default website and path to fetch from
+BASE_URL = "http://rpucella.net/courses/focs-sp22/homeworks/"  # default website and path to fetch from
 OCAML_FILE_PATTERN = r"homework(\d{1,2}).ml"  # pattern to extract homework number from the user-given ocaml file
-HTML_FILE_TEMPLATE = "homework{}.html"  # template to build the html filename given a homework number
+HTML_FILE_TEMPLATE = "{}/index.html"  # template to build the html filename given a homework number
 
 # selectors for parsing html
 CODE_BLOCK_SELECTOR = 'pre code'  # css selector to get code blocks
@@ -181,7 +181,7 @@ def infer_url(filepath):
     False
 
     >>> infer_url('foo/bar/homework1.ml')
-    'http://rpucella.net/courses/focs-fa20/homeworks/homework1.html'
+    'http://rpucella.net/courses/focs-sp22/homeworks/1/index.html'
     """
     filename = os.path.basename(filepath)
     match = OCAML_FILE_COMP.match(filename)
@@ -190,6 +190,48 @@ def infer_url(filepath):
     hw_num = match.group(1)
     url = urllib.parse.urljoin(BASE_URL, HTML_FILE_TEMPLATE.format(hw_num))
     return url
+
+
+def get_cache_filename(url: str) -> str:
+    """Get a filesystem-safe filename based on a url
+
+    >>> get_cache_filename('http://foo.bar/baz/qux/')
+    'foo_bar_baz_qux.html'
+
+    normalizes protocol
+    >>> get_cache_filename('http://foo.bar/baz/qux') == get_cache_filename('https://foo.bar/baz/qux')
+    True
+
+    normalizes trailing slashes
+    >>> get_cache_filename('http://foo.bar/baz/qux') == get_cache_filename('http://foo.bar/baz/qux/')
+    True
+
+    normalizes directory names and index.html
+    >>> get_cache_filename('http://foo.bar/baz/qux') == get_cache_filename('http://foo.bar/baz/qux/index.html')
+    True
+    >>> get_cache_filename('http://foo.bar/baz/qux/') == get_cache_filename('http://foo.bar/baz/qux/index.html')
+    True
+
+    two different homeworks end up with different filenames
+    >>> hw1 = infer_url('homework1.ml'); hw2 = infer_url('homework2.ml')
+    >>> get_cache_filename(hw1) != get_cache_filename(hw2)
+    True
+    """
+    BAD_CHARS = {'\0', '\\', '/', ':', '*', '?', '"', '>', '<', '|', ':'}
+
+    parse_result = urllib.parse.urlparse(url)
+    # if Riccardo switches to php and the urls are query-encoded like 'homework.php?id=9', this will need to be updated
+    filename = parse_result.netloc.replace('.', '_') + parse_result.path
+    # normalize trailing / and /index.html
+    filename = filename.rstrip('/')
+    if filename.endswith('/index.html'):
+        filename = filename[:-len('/index.html')]
+    filename = ''.join(c if c not in BAD_CHARS else '_' for c in filename)
+    # default to .html extension
+    path, ext = os.path.splitext(filename)
+    if ext == '':
+        filename += '.html'
+    return filename
 
 
 def main():
@@ -244,7 +286,7 @@ def main():
     if not os.path.exists(CACHE_DIR):
         os.makedirs(CACHE_DIR)
         logger.info('Created cache directory at {!r}'.format(CACHE_DIR))
-    page_name = os.path.basename(urllib.parse.urlparse(URL).path)  # get page name from url
+    page_name = get_cache_filename(URL)
     html_filepath = os.path.join(CACHE_DIR, page_name)  # local filepath
 
     # get webpage if cached version doesn't already exist
