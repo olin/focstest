@@ -1,32 +1,39 @@
-name: Python package
+# mash-up of matrix and pipenv examples from <https://github.com/actions/setup-python#usage>
+name: Test
 
 on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
+      fail-fast: false # prevent one broken version from stopping all other runs
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8]
-
+        # these will be out of date again eventually, add the latest versions
+        # and remove the unsupported ones
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10']
+    name: Python ${{ matrix.python-version }}
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+    - uses: actions/checkout@v3
+    - name: Install pipenv
+      run: pipx install pipenv
+    - name: Set up Python
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+        architecture: x64
+        cache: 'pipenv'
     - name: Install dependencies
-      run: |
-        pip install pipenv
-        pipenv install --dev
+      run: pipenv install --dev
+    - name: Lint with flake8
+      run: pipenv run flake8 *.py
+      continue-on-error: true
+    - name: Typecheck with mypy
+      run: pipenv run mypy *.py
     - name: Test with unittest
-      run: |
-        pipenv run python -m unittest discover -v
-    - name: Install with pip
-      run: |
-        pip install .
+      run: pipenv run python -m unittest discover -v
+    - name: Install as package with pip
+      run: pip install .
     - name: Run installed version
       run: |
         focstest --version
