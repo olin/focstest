@@ -1,7 +1,12 @@
 # mash-up of matrix and pipenv examples from <https://github.com/actions/setup-python#usage>
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
+    types: [opened, synchronize, reopened] # default events
+
 
 jobs:
   build:
