@@ -29,16 +29,16 @@ except DistributionNotFound:
 
 
 # default url matching
-BASE_URL = "http://rpucella.net/courses/focs-fa20/homeworks/"  # website and path to look under
-OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"  # pattern to pass the user-given ocaml file
+BASE_URL = "http://rpucella.net/courses/focs-fa20/homeworks/"  # default website and path to fetch from
+OCAML_FILE_PATTERN = r"homework(\d{1,2}).ml"  # pattern to extract homework number from the user-given ocaml file
 HTML_FILE_TEMPLATE = "homework{}.html"  # template to build the html filename given a homework number
 
 # selectors for parsing html
 CODE_BLOCK_SELECTOR = 'pre code'  # css selector to get code blocks
 
 # regex patterns for parsing text
-TEST_PATTERN = "^(.+;;)\n(.*)$"  # pattern to get input and output
-OCAML_PATTERN = "^(.*)"  # pattern to grab output of lines
+TEST_PATTERN = r"^(.+;;)\n(.*)$"  # pattern to get input and output
+OCAML_PATTERN = r"^(.*)"  # pattern to grab output of lines
 
 # compile regexes ahead of time
 OCAML_FILE_COMP = re.compile(OCAML_FILE_PATTERN)
@@ -55,8 +55,7 @@ def get_blocks(html):
     page = BeautifulSoup(html, 'html.parser')
     code_blocks = page.select(CODE_BLOCK_SELECTOR)
     if len(code_blocks) == 0:
-        logger.error('Code block selector {!r} returned no matches'.format(
-            CODE_BLOCK_SELECTOR))
+        logger.error('Code block selector {!r} returned no matches'.format(CODE_BLOCK_SELECTOR))
     return [block.get_text() for block in code_blocks]
 
 
@@ -72,7 +71,8 @@ def get_tests(text):
     for test_str in test_strs:
         test = get_test(test_str)
         if test is None:
-            logger.error('Test/response pattern {!r} returned no matches from string {!r}'.format(TEST_PATTERN, test_str))
+            logger.error(
+                'Test/response pattern {!r} returned no matches from string {!r}'.format(TEST_PATTERN, test_str))
         else:
             tests.append((test.group(1).strip(), test.group(2).strip()))
     return tests
@@ -103,8 +103,10 @@ def _run_ocaml_code(code):
 def equivalent(text):
     return text
 
+
 def strip_whitespace(text):
     return text.strip()
+
 
 def normalize_whitespace(text):
     """Replace instances of whitespace with ' '.
@@ -229,7 +231,9 @@ def main():
     if not args.url:
         url_guess = infer_url(FILE)
         if not url_guess:  # break if filename can't be matched
-            logger.critical('Could not infer url from filename {!r}. Try passing a url manually with the `--url` flag.'.format(FILE))
+            logger.critical((
+                'Could not infer url from filename {!r}. '
+                'Try passing a url manually with the `--url` flag.').format(FILE))
             sys.exit(1)
         else:
             URL = url_guess
@@ -266,7 +270,8 @@ def main():
     # TODO: get titles/descriptions from code blocks
     blocks = get_blocks(html)
     # parse code blocks for tests
-    test_suites = list(enumerate(filter(None, (get_tests(b) for b in blocks)), 1))  # list of suites and indices (starting at 1) (skipping empty suites)
+    # list of suites and indices (starting at 1) (skipping empty suites)
+    test_suites = list(enumerate(filter(None, (get_tests(b) for b in blocks)), 1))
     num_tests = sum([len(suite) for j, suite in test_suites])
     logger.info("Found {} test suites and {} tests total".format(
         len(test_suites), num_tests))
@@ -300,7 +305,7 @@ def main():
             res = run_test(test, expected_output, file=FILE)
             header_temp = ' test {} of {} in suite {}'.format(k+1, len(suite), j)
             if res is None:  # skip unparsable texts
-                print(colored('Skipped'+header_temp+': Unable to parse output','yellow'))
+                print(colored('Skipped'+header_temp+': Unable to parse output', 'yellow'))
                 continue
             else:
                 result, output, method = res

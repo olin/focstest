@@ -3,7 +3,7 @@ import unittest
 import doctest
 
 import focstest
-from focstest import equivalent, strip_whitespace, normalize_whitespace
+from focstest import normalize_whitespace
 
 
 def load_tests(loader, tests, ignore):
@@ -20,7 +20,7 @@ class TestTextNormalization(unittest.TestCase):
         # add examples here in the format (expected output, generated output)
         cases = [
             ('- : int list =\n[19; 58; 29; 88; 44; 22; 11; 34; 17; 52; 26; 13; 40; 20; 10; 5; 16; 8; 4; 2; 1]',
-            '- : int list =\n[19; 58; 29; 88; 44; 22; 11; 34; 17; 52; 26; 13; 40; 20; 10; 5; 16; 8; 4; 2;\n 1]\n')
+             '- : int list =\n[19; 58; 29; 88; 44; 22; 11; 34; 17; 52; 26; 13; 40; 20; 10; 5; 16; 8; 4; 2;\n 1]\n')
         ]
         for expected, generated in cases:
             self.assertEqual(
