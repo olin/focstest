@@ -29,16 +29,16 @@ except DistributionNotFound:
 
 
 # default url matching
-BASE_URL = "http://rpucella.net/courses/focs-fa20/homeworks/"  # website and path to look under
-OCAML_FILE_PATTERN = "homework(\d{1,2}).ml"  # pattern to pass the user-given ocaml file
+BASE_URL = "http://rpucella.net/courses/focs-fa20/homeworks/"  # default website and path to fetch from
+OCAML_FILE_PATTERN = r"homework(\d{1,2}).ml"  # pattern to extract homework number from the user-given ocaml file
 HTML_FILE_TEMPLATE = "homework{}.html"  # template to build the html filename given a homework number
 
 # selectors for parsing html
 CODE_BLOCK_SELECTOR = 'pre code'  # css selector to get code blocks
 
 # regex patterns for parsing text
-TEST_PATTERN = "^(.+;;)\n(.*)$"  # pattern to get input and output
-OCAML_PATTERN = "^(.*)"  # pattern to grab output of lines
+TEST_PATTERN = r"^(.+;;)\n(.*)$"  # pattern to get input and output
+OCAML_PATTERN = r"^(.*)"  # pattern to grab output of lines
 
 # compile regexes ahead of time
 OCAML_FILE_COMP = re.compile(OCAML_FILE_PATTERN)
