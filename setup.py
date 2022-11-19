@@ -30,6 +30,9 @@ setuptools.setup(
     # packages=setuptools.find_packages(),
     install_requires=req_specifiers,
     py_modules=['focstest'],
+    package_data={
+        'focstest': ['py.typed'],
+    },
     entry_points={
         'console_scripts': [
             'focstest = focstest:main',
