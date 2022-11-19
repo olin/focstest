@@ -1,8 +1,10 @@
 import configparser
 import setuptools
 
+from typing import List
 
-def read_pipfile():
+
+def read_pipfile() -> List[str]:
     """Parses package requirements from a Pipfile.
 
     Reformats them to match a pip-style specifier, e.g. `"bs4" = "*"` -> `bs4`,
