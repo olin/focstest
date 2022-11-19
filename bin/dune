@@ -1,0 +1,6 @@
+(executable
+ (public_name focstest_ocaml)
+ (name main)
+ (libraries compiler-libs.toplevel lambdasoup)
+ (link_flags (-linkall))
+ (modes byte))
