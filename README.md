@@ -127,11 +127,11 @@ but you can also give it a url directly:
 ```
 focstest homework2.ml --url http://rpucella.net/courses/focs-fa19/homeworks/homework2.html
 ```
-The html files are _cached locally_ to reduce the number of network requests. If
-the website has been updated with corrections or additions and you want to
-refresh `focstest`'s copy, use the `--update-cache` flag:
+The html files are _cached locally_ for 30 minutes to reduce the number of
+network requests. If the website has been updated with corrections or additions
+and you want to refresh `focstest`'s copy, use the `--ignore-cache` flag:
 ```
-focstest homework2.ml --update-cache
+focstest homework2.ml --ignore-cache
 ```
 
 `focstest` uses a standard python-powered command-line interface. You can always
@@ -172,7 +172,7 @@ $ # work more on question 1
 $ focstest h1.ml -u 1
 $ # finish and start question 2
 $ focstest h1.ml -u 2
-$ # start to doubt that focstest works and want more explicit output
+$ # start to doubt that focstest works and check each test output
 $ focstest h1.ml -u 2 -v
 $ # ...eventually finish the homework and run everything to double-check
 $ focstest h1.ml
