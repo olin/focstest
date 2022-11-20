@@ -1100,7 +1100,7 @@ def _parse_error(output: str) -> Optional[OcamlError]:
 #
 
 
-@lru_cache
+@lru_cache(maxsize=None)
 def _regex_by_surrounds(beginning: str, ending: str) -> Pattern[str]:
     # matches the smallest string that:
     # - starts with `beginning` at the beginning of a line
