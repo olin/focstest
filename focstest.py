@@ -344,6 +344,14 @@ class FetchError(FocstestError):
     def hint(self) -> Optional[str]:
         if isinstance(self.__cause__, requests.ConnectionError):
             return 'Your internet connection may be down, or the website may not exist'
+        elif isinstance(self.__cause__, requests.HTTPError):
+            http_error = self.__cause__
+            if http_error.response.status_code == 404 and http_error.request.url.startswith(BASE_URL):
+                return (
+                    'The default FoCS website url may need to be updated, see '
+                    '<https://github.com/olin/focstest/#Development>.\n'
+                    'Specify a different url (with --url)'
+                )
         return None
 
 
