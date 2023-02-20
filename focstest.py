@@ -59,7 +59,7 @@ except DistributionNotFound:
 CACHE_TIMEOUT = 1800  # time to keep using cached files, in seconds
 
 # default url matching
-BASE_URL = "https://rpucella.net/courses/focs-sp22/homeworks/"  # default website and path to fetch from
+BASE_URL = "https://rpucella.net/courses/focs-sp23/homeworks/"  # default website and path to fetch from
 HTML_FILE_TEMPLATE = "{}/index.html"  # template string for the html filename given a homework number
 OCAML_FILE_RE = re.compile(r"homework(\d{1,2}).ml")  # pattern to extract homework number from the user-given ocaml file
 
@@ -344,6 +344,14 @@ class FetchError(FocstestError):
     def hint(self) -> Optional[str]:
         if isinstance(self.__cause__, requests.ConnectionError):
             return 'Your internet connection may be down, or the website may not exist'
+        elif isinstance(self.__cause__, requests.HTTPError):
+            http_error = self.__cause__
+            if http_error.response.status_code == 404 and http_error.request.url.startswith(BASE_URL):
+                return (
+                    'The default FoCS website url may need to be updated, see '
+                    '<https://github.com/olin/focstest/#Development>.\n'
+                    'Specify a different url (with --url)'
+                )
         return None
 
 
@@ -474,7 +482,7 @@ def infer_url(filepath: PathLike) -> Optional[Url]:
 
     Returns: None if the filename could not be parsed
 
-    >>> infer_url('foo/bar/homework1.ml') == urlparse('https://rpucella.net/courses/focs-sp22/homeworks/1/index.html')
+    >>> infer_url('foo/bar/homework1.ml') == urlparse('https://rpucella.net/courses/focs-sp23/homeworks/1/index.html')
     True
     >>> infer_url('foo/bar.ml') is None
     True
