@@ -59,7 +59,7 @@ except DistributionNotFound:
 CACHE_TIMEOUT = 1800  # time to keep using cached files, in seconds
 
 # default url matching
-BASE_URL = "https://rpucella.net/courses/focs-sp22/homeworks/"  # default website and path to fetch from
+BASE_URL = "https://rpucella.net/courses/focs-sp23/homeworks/"  # default website and path to fetch from
 HTML_FILE_TEMPLATE = "{}/index.html"  # template string for the html filename given a homework number
 OCAML_FILE_RE = re.compile(r"homework(\d{1,2}).ml")  # pattern to extract homework number from the user-given ocaml file
 
