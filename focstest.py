@@ -482,7 +482,7 @@ def infer_url(filepath: PathLike) -> Optional[Url]:
 
     Returns: None if the filename could not be parsed
 
-    >>> infer_url('foo/bar/homework1.ml') == urlparse('https://rpucella.net/courses/focs-sp22/homeworks/1/index.html')
+    >>> infer_url('foo/bar/homework1.ml') == urlparse('https://rpucella.net/courses/focs-sp23/homeworks/1/index.html')
     True
     >>> infer_url('foo/bar.ml') is None
     True
